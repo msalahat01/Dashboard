@@ -14,7 +14,7 @@ import {
   TablePagination
 } from "@material-ui/core";
 import Button from '@mui/material/Button';
-import { DatePicker, Space } from 'antd';
+import { DatePicker, Space, Popover  } from 'antd';
 import dayjs from 'dayjs';
 
 
@@ -44,7 +44,9 @@ const TableComponent = () => {
     { text: "Agent Name", value: "agentname" },
     { text: "Agent ID", value: "agentid" },
     { text: "Extension", value: "extension" },
+    
     { text: "Date", value: "date"},
+    
     { text: "Dialed Num", value: "dialednum" },
     { text: "UCID", value: "ucid" },
     { text: "Call ID", value: "callid" },
@@ -480,7 +482,16 @@ const TableComponent = () => {
       value: [dayjs().subtract(30, 'd').startOf('day'), dayjs()],
     }
   ];
+
+  const defaultRange =  [dayjs().subtract(0, 'd').startOf('day'), dayjs()];
   
+  const [open, setOpen] = useState(false);
+  const hide = () => {
+    setOpen(false);
+  };
+  const handleOpenChange = (newOpen) => {
+    setOpen(newOpen);
+  };
   return (
     
     <Card className={clsx(classes.root)} >
@@ -488,23 +499,41 @@ const TableComponent = () => {
         <PerfectScrollbar >
           <div className={classes.inner} >
         
-            <Table>
+            <Table >
 {/* Fillter */}
-            <TableHead >
-            <TableRow>
+            <TableHead>
+            <TableRow >
 
               <TableCell colSpan={1}>
-                <Button size="medium" variant="contained">Fillter</Button>
+
+              <Popover
+                  content={
+                    <Button size="small" variant="contained" onClick={hide}>
+                      Close
+                    </Button>
+                  }
+                  title={
+                    <div style={{ textAlign: "center" }}>
+                      Title
+                    </div>
+                  }
+                  trigger="click"
+                  open={open}
+                  onOpenChange={handleOpenChange}
+                  placement="bottomRight  "  // Ensures popover appears under the button
+                >
+                  <Button size="medium" variant="contained">Filter</Button>
+              </Popover>
+
               </TableCell>
 
 {/* TIME */}
               <TableCell colSpan={10}>
               <Space direction="vertical" size={12}>
-               
                     <RangePicker  presets={[
                     {
-                      label: <span aria-label="End of Day to Current Time">The day</span>,
-                      value: () => [dayjs().subtract(0, 'd').startOf('day'), dayjs()], // End of day to current time
+                      label: <span aria-label="End of Day to Current Time">Last day</span>,
+                      value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')], // End of day to current time
 
                     },
                     ...rangePresets,
@@ -513,14 +542,17 @@ const TableComponent = () => {
                     format: 'HH:mm',
                   }}
                   format="YYYY-MM-DD HH:mm"
+                  value={defaultRange}
                   onChange={(value, dateString) => {
                     console.log('Selected Time: ', value);
                     console.log('Formatted Selected Time: ', dateString);
                   }}
                   onOk={onOk}
                 />
-              </Space>             
+              </Space> 
+                          
             </TableCell>
+            
 
 {/* Clear Button */}
               <TableCell colSpan={1}>
@@ -531,33 +563,34 @@ const TableComponent = () => {
           </TableHead>
 
   {/* Head */}
-              <TableHead>
-                <TableRow >
-                  {tableHeaders.map(item => (
-                    <TableCell key={item.value} >
-                      <span>{item.text}</span>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-
+  <TableHead>
+  <TableRow>
+    {tableHeaders.map(item => (
+      <TableCell key={item.value} style={{ padding: '14px 8px' }}>
+        <span>{item.text}
+        </span>
+      </TableCell>
+    ))}
+  </TableRow>
+</TableHead>
           
      {/* Data */}
+     
               <TableBody >
                 {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(obj => (
                   <TableRow hover key={obj.id}>
-                    <TableCell>{obj.agentname}</TableCell>
-                    <TableCell>{obj.agentid}</TableCell>
-                    <TableCell>{obj.extension}</TableCell>
-                    <TableCell>{obj.date}</TableCell>
-                    <TableCell>{obj.dialednum}</TableCell>
-                    <TableCell>{obj.ucid}</TableCell>
-                    <TableCell>{obj.callid}</TableCell>
-                    <TableCell>{obj.trunkgroup}</TableCell>
-                    <TableCell>{obj.split}</TableCell>
-                    <TableCell>{obj.duration}</TableCell>
-                    <TableCell>{obj.holdtime}</TableCell>
-                    <TableCell>{obj.transferred}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.agentname}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.agentid}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.extension}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.date}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.dialednum}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.ucid}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.callid}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.trunkgroup}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.split}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.duration}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.holdtime}</TableCell>
+                    <TableCell style={{ fontSize: '12px' }}>{obj.transferred}</TableCell>
 
                   </TableRow>
                 ))}
@@ -566,7 +599,7 @@ const TableComponent = () => {
           </div>
         </PerfectScrollbar>
       </CardContent>
-      <CardActions className={classes.actions}>
+      <CardActions className={classes.actions} style={{ height:'55px' }}>
         <TablePagination
           component="div"
           count={orders.length}

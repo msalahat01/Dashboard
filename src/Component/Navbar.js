@@ -14,7 +14,7 @@ const Navbar = () => {
 
   return (
     <div className="navbar" 
-      style={{ display: "flex", alignItems: "center",justifyContent: "space-between", background: "#1116", padding: "5px 25px", boxShadow: "0 3px 9px rgba(0,0,0,0.6)" }}>
+      style={{ display: "flex", alignItems: "center",justifyContent: "space-between", background: "#1116", padding: "5px 20px", boxShadow: "0 3px 9px rgba(0,0,0,0.6)" }}>
 
       <Link to={"/"}>  
         <img

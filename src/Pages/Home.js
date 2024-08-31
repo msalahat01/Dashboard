@@ -10,7 +10,7 @@ function Home() {
     
     <div className='content'>
 
-        <div className='Table' style={{ width: '95%',margin: '0 auto',marginTop: '3%',marginBottom: '2%',
+        <div className='Table' style={{ width: '95%',margin: '0 auto',marginTop: '2%',marginBottom: '1%',
            boxShadow: "0 1px 10px rgba(0,0,0,0.4)"}}>
 
         <TableComponent/>
