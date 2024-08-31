@@ -14,14 +14,13 @@ import {
   TablePagination
 } from "@material-ui/core";
 import Button from '@mui/material/Button';
-import { DatePicker, Space, Popover  } from 'antd';
+import TextField from '@mui/material/TextField';
+import { DatePicker, Space, Popover } from 'antd';
 import dayjs from 'dayjs';
-
 
 const useStyles = makeStyles(theme => ({
   root: {
     padding: 0
-
   },
   content: {
     padding: 0
@@ -44,9 +43,7 @@ const TableComponent = () => {
     { text: "Agent Name", value: "agentname" },
     { text: "Agent ID", value: "agentid" },
     { text: "Extension", value: "extension" },
-    
     { text: "Date", value: "date"},
-    
     { text: "Dialed Num", value: "dialednum" },
     { text: "UCID", value: "ucid" },
     { text: "Call ID", value: "callid" },
@@ -454,6 +451,8 @@ const TableComponent = () => {
     // Add more orders as needed
   ];
 
+  const [filteredOrders, setFilteredOrders] = useState(orders);
+
   const handlePageChange = (event, page) => {
     setPage(page);
   };
@@ -483,8 +482,17 @@ const TableComponent = () => {
     }
   ];
 
-  const defaultRange =  [dayjs().subtract(0, 'd').startOf('day'), dayjs()];
-  
+  const fields = [
+    { id: "agent-id", label: "Agent ID" },
+    { id: "extension", label: "Extension" },
+    { id: "dialed-num", label: "Dialed Num" },
+    { id: "ucid", label: "UCID" },
+    { id: "trunk", label: "Trunk" },
+    { id: "split", label: "Split" },
+  ];
+
+  const defaultRange = [dayjs().subtract(0, 'd').startOf('day'), dayjs()];
+
   const [open, setOpen] = useState(false);
   const hide = () => {
     setOpen(false);
@@ -492,106 +500,143 @@ const TableComponent = () => {
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
+
+  const [sortConfig, setSortConfig] = useState({ key: '', direction: 'ascending' });
+
+  const handleSort = (columnValue) => {
+    let direction = 'ascending';
+    if (sortConfig.key === columnValue && sortConfig.direction === 'ascending') {
+      direction = 'descending';
+    }
+    setSortConfig({ key: columnValue, direction });
+  };
+
+  const sortedData = React.useMemo(() => {
+    if (sortConfig.key) {
+      return [...filteredOrders].sort((a, b) => {
+        if (a[sortConfig.key] < b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? -1 : 1;
+        }
+        if (a[sortConfig.key] > b[sortConfig.key]) {
+          return sortConfig.direction === 'ascending' ? 1 : -1;
+        }
+        return 0;
+      });
+    }
+    return filteredOrders;
+  }, [filteredOrders, sortConfig]);
+
+  const handleSearch = () => {
+    // Implement search/filter logic here
+    setFilteredOrders(orders); // Placeholder: replace with actual filtered data
+    hide();
+  };
+
+  const handleClear = () => {
+    setFilteredOrders(orders);
+    // Reset date range and other filters
+  };
+
   return (
-    
-    <Card className={clsx(classes.root)} >
-      <CardContent className={classes.content} >
-        <PerfectScrollbar >
-          <div className={classes.inner} >
-        
-            <Table >
-{/* Fillter */}
-            <TableHead>
-            <TableRow >
+    <Card className={clsx(classes.root)}>
+      <CardContent className={classes.content}>
+        <PerfectScrollbar>
+          <div className={classes.inner}>
+            <Table>
+              {/* Filter */}
+              <TableHead>
+                <TableRow>
+                  <TableCell colSpan={1}>
+                    <Popover
+                      content={
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
+                          {fields.map((field) => (
+                            <TextField
+                              key={field.id}
+                              id={field.id}
+                              label={field.label}
+                              variant="outlined"
+                              size="small"
+                              style={{ width: "200px", marginBottom: "10px", fontSize: "14px" }}
+                              InputProps={{
+                                style: { fontSize: "14px" },
+                              }}
+                              InputLabelProps={{
+                                style: { fontSize: "12px" },
+                              }}
+                            />
+                          ))}
+                          <Button size="small" variant="contained" onClick={handleSearch}>
+                            Search
+                          </Button>
+                        </div>
+                      }
+                      trigger="click"
+                      open={open}
+                      onOpenChange={handleOpenChange}
+                      placement="bottomRight"
+                    >
+                      <Button size="medium" variant="contained">Filter</Button>
+                    </Popover>
+                  </TableCell>
 
-              <TableCell colSpan={1}>
+                  {/* TIME */}
+                  <TableCell colSpan={10}>
+                    <Space direction="vertical" size={12}>
+                      <RangePicker
+                        presets={[
+                          {
+                            label: <span aria-label="End of Day to Current Time">Last day</span>,
+                            value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')],
+                          },
+                          ...rangePresets,
+                        ]}
+                        showTime={{
+                          format: 'HH:mm',
+                        }}
+                        format="YYYY-MM-DD HH:mm"
+                        value={defaultRange}
+                        onChange={(value, dateString) => {
+                          console.log('Selected Time: ', value);
+                          console.log('Formatted Selected Time: ', dateString);
+                        }}
+                        onOk={onOk}
+                      />
+                    </Space>
+                  </TableCell>
 
-              <Popover
-                  content={
-                    <Button size="small" variant="contained" onClick={hide}>
-                      Close
-                    </Button>
-                  }
-                  title={
-                    <div style={{ textAlign: "center" }}>
-                      Title
-                    </div>
-                  }
-                  trigger="click"
-                  open={open}
-                  onOpenChange={handleOpenChange}
-                  placement="bottomRight  "  // Ensures popover appears under the button
-                >
-                  <Button size="medium" variant="contained">Filter</Button>
-              </Popover>
+                  {/* Clear Button */}
+                  <TableCell colSpan={1}>
+                    <Button size="medium" variant="contained" onClick={handleClear}>Clear</Button>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
 
-              </TableCell>
+              {/* Head */}
+              <TableHead>
+                <TableRow>
+                  {tableHeaders.map(item => (
+                    <TableCell
+                      key={item.value}
+                      style={{ padding: '14px 8px', cursor: 'pointer' }}
+                      onClick={() => handleSort(item.value)}
+                    >
+                      <span>{item.text}</span>
+                      {sortConfig.key === item.value && (
+                        <span>{sortConfig.direction === 'ascending' ? ' ↑' : ' ↓'}</span>
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
 
-{/* TIME */}
-              <TableCell colSpan={10}>
-              <Space direction="vertical" size={12}>
-                    <RangePicker  presets={[
-                    {
-                      label: <span aria-label="End of Day to Current Time">Last day</span>,
-                      value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')], // End of day to current time
-
-                    },
-                    ...rangePresets,
-                  ]}
-                  showTime={{
-                    format: 'HH:mm',
-                  }}
-                  format="YYYY-MM-DD HH:mm"
-                  value={defaultRange}
-                  onChange={(value, dateString) => {
-                    console.log('Selected Time: ', value);
-                    console.log('Formatted Selected Time: ', dateString);
-                  }}
-                  onOk={onOk}
-                />
-              </Space> 
-                          
-            </TableCell>
-            
-
-{/* Clear Button */}
-              <TableCell colSpan={1}>
-                <Button size="medium" variant="contained">Clear</Button>
-              </TableCell>
-
-            </TableRow>
-          </TableHead>
-
-  {/* Head */}
-  <TableHead>
-  <TableRow>
-    {tableHeaders.map(item => (
-      <TableCell key={item.value} style={{ padding: '14px 8px' }}>
-        <span>{item.text}
-        </span>
-      </TableCell>
-    ))}
-  </TableRow>
-</TableHead>
-          
-     {/* Data */}
-     
-              <TableBody >
-                {orders.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(obj => (
-                  <TableRow hover key={obj.id}>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.agentname}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.agentid}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.extension}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.date}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.dialednum}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.ucid}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.callid}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.trunkgroup}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.split}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.duration}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.holdtime}</TableCell>
-                    <TableCell style={{ fontSize: '12px' }}>{obj.transferred}</TableCell>
-
+              {/* Body */}
+              <TableBody>
+                {sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
+                  <TableRow hover key={row.id}>
+                    {tableHeaders.map(header => (
+                      <TableCell key={header.value} align="left">{row[header.value]}</TableCell>
+                    ))}
                   </TableRow>
                 ))}
               </TableBody>
@@ -599,15 +644,16 @@ const TableComponent = () => {
           </div>
         </PerfectScrollbar>
       </CardContent>
-      <CardActions className={classes.actions} style={{ height:'55px' }}>
+
+      <CardActions className={classes.actions}>
         <TablePagination
+          rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={orders.length}
+          count={filteredOrders.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
           onPageChange={handlePageChange}
           onRowsPerPageChange={handleRowsPerPageChange}
-          page={page}
-          rowsPerPage={rowsPerPage}
-          rowsPerPageOptions={[10, 25, 50, 100]}
         />
       </CardActions>
     </Card>
