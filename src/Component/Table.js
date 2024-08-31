@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   actions: {
     justifyContent: "flex-end"
   },
-}));
+}));  
 
 const TableComponent = () => {
   const classes = useStyles();
@@ -451,6 +451,22 @@ const TableComponent = () => {
     { text: "Transferred", value: "transferred"}
   ];
 
+  const headerWidths = {
+    agentname: '150px',
+    agentid: '120px',
+    extension: '100px',
+    date: '200px',
+    dialednum: '150px',
+    ucid: '120px',
+    callid: '120px',
+    trunkgroup: '130px',
+    split: '100px',
+    duration: '120px',
+    holdtime: '110px',
+    transferred: '120px'
+  };
+
+
   const handlePageChange = (event, page) => {
     setPage(page);
   };
@@ -489,6 +505,7 @@ const TableComponent = () => {
     { id: "split", label: "Split" },
   ];
 
+  // Deff Time
   const defaultRange = [dayjs().subtract(0, 'd').startOf('day'), dayjs()];
 
   const [open, setOpen] = useState(false);
@@ -536,8 +553,9 @@ const TableComponent = () => {
   };
 
   return (
-    <Card className={clsx(classes.root)}>
-      <CardContent className={classes.content}>
+    
+    <Card className={clsx(classes.root)}>  
+    <CardContent className={classes.content}>
         <PerfectScrollbar>
           <div className={classes.inner}>
             <Table>
@@ -616,7 +634,7 @@ const TableComponent = () => {
                   {tableHeaders.map(item => (
                     <TableCell
                       key={item.value}
-                      style={{ padding: '14px 8px', cursor: 'pointer' }}
+                      style={{ padding: '14px 8px', cursor: 'pointer', width: headerWidths[item.value] }}
                       onClick={() => handleSort(item.value)}
                     >
                       <span>{item.text}</span>
