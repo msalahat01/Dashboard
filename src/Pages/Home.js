@@ -1,7 +1,6 @@
 import React  from 'react';
 import Navbar from '../Component/Navbar';
 import TableComponent from '../Component/Table';
-
 function Home() {
   return (
 

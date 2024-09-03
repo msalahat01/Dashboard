@@ -18,6 +18,8 @@ import TextField from '@mui/material/TextField';
 import { DatePicker, Space, Popover } from 'antd';
 import dayjs from 'dayjs';
 
+const { RangePicker } = DatePicker;
+
 const useStyles = makeStyles(theme => ({
   root: {
     padding: 0
@@ -476,7 +478,17 @@ const TableComponent = () => {
     setPage(0); // Reset page to 0 when rows per page changes
   };
 
-  const { RangePicker } = DatePicker;
+  const fields = [
+    { id: "agent-id", label: "Agent ID" },
+    { id: "extension", label: "Extension" },
+    { id: "dialed-num", label: "Dialed Num" },
+    { id: "ucid", label: "UCID" },
+    { id: "trunk", label: "Trunk" },
+    { id: "split", label: "Split" },
+  ];
+
+  const [selectedRange, setSelectedRange] = useState([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
+
   const onOk = (value) => {
     console.log('onOk: ', value);
   };
@@ -496,22 +508,12 @@ const TableComponent = () => {
     }
   ];
 
-  const fields = [
-    { id: "agent-id", label: "Agent ID" },
-    { id: "extension", label: "Extension" },
-    { id: "dialed-num", label: "Dialed Num" },
-    { id: "ucid", label: "UCID" },
-    { id: "trunk", label: "Trunk" },
-    { id: "split", label: "Split" },
-  ];
-
-  // Deff Time
-  const defaultRange = [dayjs().subtract(0, 'd').startOf('day'), dayjs()];
-
   const [open, setOpen] = useState(false);
+
   const hide = () => {
     setOpen(false);
   };
+
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
@@ -554,11 +556,11 @@ const TableComponent = () => {
 
   return (
     
-    <Card className={clsx(classes.root)}>  
+    <Card className={clsx(classes.root)} >  
     <CardContent className={classes.content}>
         <PerfectScrollbar>
           <div className={classes.inner}>
-            <Table>
+          <Table>
               {/* Filter */}
               <TableHead>
                 <TableRow>
@@ -599,25 +601,26 @@ const TableComponent = () => {
                   {/* TIME */}
                   <TableCell colSpan={10}>
                     <Space direction="vertical" size={12}>
-                      <RangePicker
-                        presets={[
-                          {
-                            label: <span aria-label="End of Day to Current Time">Last day</span>,
-                            value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs().subtract(1, 'd').endOf('day')],
-                          },
-                          ...rangePresets,
-                        ]}
-                        showTime={{
-                          format: 'HH:mm',
-                        }}
-                        format="YYYY-MM-DD HH:mm"
-                        value={defaultRange}
-                        onChange={(value, dateString) => {
-                          console.log('Selected Time: ', value);
-                          console.log('Formatted Selected Time: ', dateString);
-                        }}
-                        onOk={onOk}
-                      />
+                    <RangePicker
+      presets={[
+        {
+          label: <span aria-label="End of Day to Current Time">Last day</span>,
+          value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
+        },
+        ...rangePresets,
+      ]}
+      showTime={{
+        format: 'HH:mm',
+      }}
+      format="YYYY-MM-DD HH:mm"
+      value={selectedRange}
+      onChange={(value, dateString) => {
+        setSelectedRange(value); // Set the selected range to the state
+        console.log('Selected Time: ', value);
+        console.log('Formatted Selected Time: ', dateString);
+      }}
+      onOk={onOk}
+    />
                     </Space>
                   </TableCell>
 
@@ -634,7 +637,7 @@ const TableComponent = () => {
                   {tableHeaders.map(item => (
                     <TableCell
                       key={item.value}
-                      style={{ padding: '14px 8px', cursor: 'pointer', width: headerWidths[item.value] }}
+                      style={{ padding: '14px 8px',fontWeight: "600" ,cursor: 'pointer', width: headerWidths[item.value],fontSize:'13px' }}
                       onClick={() => handleSort(item.value)}
                     >
                       <span>{item.text}</span>
