@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState , useEffect} from "react";
 import clsx from "clsx";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { makeStyles } from "@material-ui/styles";
@@ -17,7 +17,9 @@ import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { DatePicker, Space, Popover } from 'antd';
 import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
 
+dayjs.extend(isBetween);
 const { RangePicker } = DatePicker;
 
 const useStyles = makeStyles(theme => ({
@@ -44,7 +46,7 @@ const TableComponent = () => {
     agentname: "Jane Smith",
     agentid: "5678",
     extension: "1002",
-    date: "2024-08-27 11:15",
+    date: "2024-07-27 11:15",
     dialednum: "0722334455",
     duration: "00:03:45",
     holdtime: "00:00:30",
@@ -55,123 +57,11 @@ const TableComponent = () => {
     transferred: "Yes"
   },
   {
-    agentname: "Mike Johnson",
-    agentid: "9101",
-    extension: "1003",
-    date: "2024-08-27 12:00",
-    dialednum: "0711223344",
-    duration: "00:07:15",
-    holdtime: "00:02:00",
-    ucid: "34567890123456789012",
-    callid: "9012",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "No"
-  },
-  {
-    agentname: "Sarah Brown",
-    agentid: "1122",
-    extension: "1004",
-    date: "2024-08-27 13:45",
-    dialednum: "0700334455",
-    duration: "00:04:20",
-    holdtime: "00:01:30",
-    ucid: "45678901234567890123",
-    callid: "1234",
-    trunkgroup: "Group1",
-    split: "3",
-    transferred: "Yes"
-  },
-  {
-    agentname: "David Lee",
-    agentid: "3344",
-    extension: "1005",
-    date: "2024-08-27 14:10",
-    dialednum: "0799445566",
-    duration: "00:02:50",
-    holdtime: "00:00:45",
-    ucid: "56789012345678901234",
-    callid: "3456",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "No"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Sarah Brown",
-    agentid: "1122",
-    extension: "1004",
-    date: "2024-08-27 13:45",
-    dialednum: "0700334455",
-    duration: "00:04:20",
-    holdtime: "00:01:30",
-    ucid: "45678901234567890123",
-    callid: "1234",
-    trunkgroup: "Group1",
-    split: "3",
-    transferred: "Yes"
-  },
-  {
-    agentname: "David Lee",
-    agentid: "3344",
-    extension: "1005",
-    date: "2024-08-27 14:10",
-    dialednum: "0799445566",
-    duration: "00:02:50",
-    holdtime: "00:00:45",
-    ucid: "56789012345678901234",
-    callid: "3456",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "No"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Jane Smith",
-    agentid: "5678",
-    extension: "1002",
-    date: "2024-08-27 11:15",
-    dialednum: "0722334455",
+    agentname: "ALi",
+    agentid: "4444",
+    extension: "109",
+    date: "2024-08-28 11:15",
+    dialednum: "0788899",
     duration: "00:03:45",
     holdtime: "00:00:30",
     ucid: "23456789012345678901",
@@ -179,263 +69,12 @@ const TableComponent = () => {
     trunkgroup: "Group2",
     split: "2",
     transferred: "Yes"
-  },
-  {
-    agentname: "Mike Johnson",
-    agentid: "9101",
-    extension: "1003",
-    date: "2024-08-27 12:00",
-    dialednum: "0711223344",
-    duration: "00:07:15",
-    holdtime: "00:02:00",
-    ucid: "34567890123456789012",
-    callid: "9012",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "No"
-  },
-  {
-    agentname: "Sarah Brown",
-    agentid: "1122",
-    extension: "1004",
-    date: "2024-08-27 13:45",
-    dialednum: "0700334455",
-    duration: "00:04:20",
-    holdtime: "00:01:30",
-    ucid: "45678901234567890123",
-    callid: "1234",
-    trunkgroup: "Group1",
-    split: "3",
-    transferred: "Yes"
-  },
-  {
-    agentname: "David Lee",
-    agentid: "3344",
-    extension: "1005",
-    date: "2024-08-27 14:10",
-    dialednum: "0799445566",
-    duration: "00:02:50",
-    holdtime: "00:00:45",
-    ucid: "56789012345678901234",
-    callid: "3456",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "No"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Sarah Brown",
-    agentid: "1122",
-    extension: "1004",
-    date: "2024-08-27 13:45",
-    dialednum: "0700334455",
-    duration: "00:04:20",
-    holdtime: "00:01:30",
-    ucid: "45678901234567890123",
-    callid: "1234",
-    trunkgroup: "Group1",
-    split: "3",
-    transferred: "Yes"
-  },
-  {
-    agentname: "David Lee",
-    agentid: "3344",
-    extension: "1005",
-    date: "2024-08-27 14:10",
-    dialednum: "0799445566",
-    duration: "00:02:50",
-    holdtime: "00:00:45",
-    ucid: "56789012345678901234",
-    callid: "3456",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "No"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Sarah Brown",
-    agentid: "1122",
-    extension: "1004",
-    date: "2024-08-27 13:45",
-    dialednum: "0700334455",
-    duration: "00:04:20",
-    holdtime: "00:01:30",
-    ucid: "45678901234567890123",
-    callid: "1234",
-    trunkgroup: "Group1",
-    split: "3",
-    transferred: "Yes"
-  },
-  {
-    agentname: "David Lee",
-    agentid: "3344",
-    extension: "1005",
-    date: "2024-08-27 14:10",
-    dialednum: "0799445566",
-    duration: "00:02:50",
-    holdtime: "00:00:45",
-    ucid: "56789012345678901234",
-    callid: "3456",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "No"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Jane Smith",
-    agentid: "5678",
-    extension: "1002",
-    date: "2024-08-27 11:15",
-    dialednum: "0722334455",
-    duration: "00:03:45",
-    holdtime: "00:00:30",
-    ucid: "23456789012345678901",
-    callid: "5678",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Mike Johnson",
-    agentid: "9101",
-    extension: "1003",
-    date: "2024-08-27 12:00",
-    dialednum: "0711223344",
-    duration: "00:07:15",
-    holdtime: "00:02:00",
-    ucid: "34567890123456789012",
-    callid: "9012",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "No"
-  },
-  {
-    agentname: "Sarah Brown",
-    agentid: "1122",
-    extension: "1004",
-    date: "2024-08-27 13:45",
-    dialednum: "0700334455",
-    duration: "00:04:20",
-    holdtime: "00:01:30",
-    ucid: "45678901234567890123",
-    callid: "1234",
-    trunkgroup: "Group1",
-    split: "3",
-    transferred: "Yes"
-  },
-  {
-    agentname: "David Lee",
-    agentid: "3344",
-    extension: "1005",
-    date: "2024-08-27 14:10",
-    dialednum: "0799445566",
-    duration: "00:02:50",
-    holdtime: "00:00:45",
-    ucid: "56789012345678901234",
-    callid: "3456",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "No"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
-  {
-    agentname: "Emily Davis",
-    agentid: "5566",
-    extension: "1006",
-    date: "2024-08-27 15:25",
-    dialednum: "0733221100",
-    duration: "00:06:40",
-    holdtime: "00:01:15",
-    ucid: "67890123456789012345",
-    callid: "5678",
-    trunkgroup: "Group3",
-    split: "1",
-    transferred: "Yes"
-  },
+  }
   // Add more orders as needed
 ];
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
+  
   const [filteredOrders, setFilteredOrders] = useState(orders);
 
   const tableHeaders = [
@@ -508,18 +147,14 @@ const TableComponent = () => {
     }
   ];
 
+  //open Fillter button
   const [open, setOpen] = useState(false);
-
-  const hide = () => {
-    setOpen(false);
-  };
-
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
 
+  //Fillter Data when click on cell 
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'ascending' });
-
   const handleSort = (columnValue) => {
     let direction = 'ascending';
     if (sortConfig.key === columnValue && sortConfig.direction === 'ascending') {
@@ -528,9 +163,22 @@ const TableComponent = () => {
     setSortConfig({ key: columnValue, direction });
   };
 
+  //Data sorted
   const sortedData = React.useMemo(() => {
+    if (!selectedRange) return filteredOrders;
+  
+    const startDate = selectedRange[0];
+    const endDate = selectedRange[1];
+  
+    // Filter by date range
+    const dateFilteredOrders = filteredOrders.filter(order => {
+      const orderDate = dayjs(order.date); // Assuming 'order.date' contains the date you want to filter
+      return orderDate.isBetween(startDate, endDate, null, '[]'); // Inclusive filter
+    });
+  
+    // Sort the filtered data
     if (sortConfig.key) {
-      return [...filteredOrders].sort((a, b) => {
+      return [...dateFilteredOrders].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -540,19 +188,19 @@ const TableComponent = () => {
         return 0;
       });
     }
-    return filteredOrders;
-  }, [filteredOrders, sortConfig]);
-
-  const handleSearch = () => {
-    // Implement search/filter logic here
-    setFilteredOrders(orders); // Placeholder: replace with actual filtered data
-    hide();
-  };
+  
+    return dateFilteredOrders;
+  }, [filteredOrders, sortConfig, selectedRange]);
 
   const handleClear = () => {
-    setFilteredOrders(orders);
-    // Reset date range and other filters
+    setFilteredOrders(orders);      // Reset filtered orders to the default orders
+    setSelectedRange([dayjs().subtract(0, 'd').startOf('day'), dayjs()]); // Reset the date range to the default (today)
+    setSortConfig({ key: '', direction: '' }); // Reset the sorting configuration
   };
+
+  useEffect(() => {
+   
+  }, []);
 
   return (
     
@@ -584,7 +232,7 @@ const TableComponent = () => {
                               }}
                             />
                           ))}
-                          <Button size="small" variant="contained" onClick={handleSearch}>
+                          <Button size="small" variant="contained">
                             Search
                           </Button>
                         </div>
@@ -602,25 +250,25 @@ const TableComponent = () => {
                   <TableCell colSpan={10}>
                     <Space direction="vertical" size={12}>
                     <RangePicker
-      presets={[
-        {
-          label: <span aria-label="End of Day to Current Time">Last day</span>,
-          value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
-        },
-        ...rangePresets,
-      ]}
-      showTime={{
-        format: 'HH:mm',
-      }}
-      format="YYYY-MM-DD HH:mm"
-      value={selectedRange}
-      onChange={(value, dateString) => {
-        setSelectedRange(value); // Set the selected range to the state
-        console.log('Selected Time: ', value);
-        console.log('Formatted Selected Time: ', dateString);
-      }}
-      onOk={onOk}
-    />
+                      presets={[
+                        {
+                          label: <span aria-label="End of Day to Current Time">Last day</span>,
+                          value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
+                        },
+                        ...rangePresets,
+                      ]}
+                      showTime={{
+                        format: 'HH:mm',
+                      }}
+                      format="YYYY-MM-DD HH:mm"
+                      value={selectedRange}
+                      onChange={(value, dateString) => {
+                        setSelectedRange(value); // Set the selected range to the state
+                        console.log('Selected Time: ', value);
+                        console.log('Formatted Selected Time: ', dateString);
+                      }}
+                      onOk={onOk}
+                    />
                     </Space>
                   </TableCell>
 
