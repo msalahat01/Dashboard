@@ -61,17 +61,17 @@ const TableComponent = () => {
   ];
 
   const headerWidths = {
-    agentname: '150px',
+    agentname: '140px',
     agentid: '120px',
     extension: '100px',
-    date: '200px',
+    date: '150px',
     dialednum: '150px',
     ucid: '120px',
     callid: '120px',
-    trunkgroup: '130px',
+    trunkgroup: '140px',
     split: '100px',
     duration: '120px',
-    holdtime: '110px',
+    holdtime: '120px',
     transferred: '120px'
   };
 
@@ -116,7 +116,7 @@ const TableComponent = () => {
     setOpen(false); // Close the popover
   };
 
-  const [selectedRange, setSelectedRange] = useState([dayjs().subtract(30, 'd').startOf('day'), dayjs()]);
+  const [selectedRange, setSelectedRange] = useState([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
 
   const onOk = (value) => {
     console.log('onOk: ', value);
@@ -210,7 +210,7 @@ const TableComponent = () => {
     });
   
     // Reset the date range to the default (last 30 days)
-    setSelectedRange([dayjs().subtract(30, 'd').startOf('day'), dayjs()]);
+    setSelectedRange([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
   
     // Reset filtered orders to include all orders
     setFilteredOrders(orders);
@@ -289,8 +289,14 @@ const TableComponent = () => {
                   {/* TIME */}
                   <TableCell colSpan={10}>
                     <Space direction="vertical" size={12}>
-                      <RangePicker
-                        presets={rangePresets}
+                    <RangePicker
+                        presets={[
+                          {
+                            label: <span aria-label="End of Day to Current Time">Last day</span>,
+                            value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
+                          },
+                          ...rangePresets,
+                        ]}
                         showTime={{
                           format: 'HH:mm',
                         }}
@@ -298,6 +304,8 @@ const TableComponent = () => {
                         value={selectedRange}
                         onChange={(value, dateString) => {
                           setSelectedRange(value); // Set the selected range to the state
+                          console.log('Selected Time: ', value);
+                          console.log('Formatted Selected Time: ', dateString);
                         }}
                         onOk={onOk}
                       />
