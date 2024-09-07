@@ -12,13 +12,13 @@ import {
   TableHead,
   TableRow,
   TablePagination
-} from "@mui/material"; // Use @mui/material consistently
+} from "@material-ui/core"; 
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { DatePicker, Space, Popover } from 'antd';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import { orders } from './Const'; // Ensure this import is correct
+import { orders } from './Const'; 
 
 dayjs.extend(isBetween);
 const { RangePicker } = DatePicker;
@@ -60,19 +60,20 @@ const TableComponent = () => {
     { text: "Transferred", value: "transferred" }
   ];
 
+
   const headerWidths = {
-    agentname: '15%',
-    agentid: '10%',
-    extension: '10%',
-    date: '20%',
-    dialednum: '15%',
-    ucid: '10%',
-    callid: '10%',
-    trunkgroup: '15%',
-    split: '10%',
-    duration: '10%',
-    holdtime: '10%',
-    transferred: '10%'
+    agentname: '150px',
+    agentid: '120px',
+    extension: '100px',
+    date: '200px',
+    dialednum: '150px',
+    ucid: '120px',
+    callid: '120px',
+    trunkgroup: '130px',
+    split: '100px',
+    duration: '120px',
+    holdtime: '110px',
+    transferred: '120px'
   };
 
   const handlePageChange = (event, page) => {
@@ -250,7 +251,7 @@ const TableComponent = () => {
               <TableHead>
                 <TableRow>
                   {/* Filter button */}
-                  <TableCell colSpan={1}>
+                  <TableCell colSpan={1} >
                     <Popover
                       content={
                         <div style={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
@@ -342,7 +343,7 @@ const TableComponent = () => {
                 {sortedData.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map(row => (
                   <TableRow hover key={row.id}>
                     {tableHeaders.map(header => (
-                      <TableCell style={{ fontSize: '12px' }} key={header.value} align="left">{row[header.value]}</TableCell>
+                      <TableCell style={{ fontSize: '12px' }} key={header.value}x >{row[header.value]}</TableCell>
                     ))}
                   </TableRow>
                 ))}
@@ -352,7 +353,7 @@ const TableComponent = () => {
         </PerfectScrollbar>
       </CardContent>
 
-      <CardActions className={classes.actions} style={{ height: '55px' }}>
+      <CardActions className={classes.actions} style={{ height: '50px' }}>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
