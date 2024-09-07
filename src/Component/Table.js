@@ -111,6 +111,12 @@ const TableComponent = () => {
     'split': '',
   });
 
+  const handleSearch = () => {
+    setSearchFilters(filterValues);
+    setFilteredOrders(orders); // Reset filtered orders to include all orders based on updated search filters
+    setOpen(false); // Close the popover
+  };
+
   const [selectedRange, setSelectedRange] = useState([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
 
   const onOk = (value) => {
@@ -183,9 +189,37 @@ const TableComponent = () => {
   }, [filteredOrders, sortConfig, selectedRange, searchFilters]);
 
   const handleClear = () => {
-    setFilteredOrders(orders); // Reset filtered orders to the default orders
-    setSelectedRange([dayjs().subtract(0, 'd').startOf('day'), dayjs()]); // Reset the date range to the default (today)
-    setSortConfig({ key: '', direction: '' }); // Reset the sorting configuration
+    // Reset search filters to default
+    setSearchFilters({
+      'agent-id': '',
+      'extension': '',
+      'dialed-num': '',
+      'ucid': '',
+      'trunk': '',
+      'split': '',
+    });
+  
+    // Reset filter values to default
+    setFilterValues({
+      'agent-id': '',
+      'extension': '',
+      'dialed-num': '',
+      'ucid': '',
+      'trunk': '',
+      'split': '',
+    });
+  
+    // Reset the date range to the default (today)
+    setSelectedRange([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
+  
+    // Reset filtered orders to include all orders
+    setFilteredOrders(orders);
+  
+    // Reset the sorting configuration
+    setSortConfig({ key: '', direction: '' });
+  
+    // Optionally, close the filter popover if open
+    setOpen(false);
   };
 
   useEffect(() => {
@@ -238,7 +272,7 @@ const TableComponent = () => {
                               }}
                             />
                           ))}
-                          <Button size="small" variant="contained" onClick={() => setSearchFilters(filterValues)}>
+                         <Button size="small" variant="contained" onClick={handleSearch}>
                             Search
                           </Button>
                         </div>
