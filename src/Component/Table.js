@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import clsx from "clsx";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { makeStyles } from "@material-ui/styles";
@@ -12,7 +12,7 @@ import {
   TableHead,
   TableRow,
   TablePagination
-} from "@material-ui/core"; // Ensure consistency here if you are using @mui/material or @material-ui/core
+} from "@mui/material"; // Use @mui/material consistently
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { DatePicker, Space, Popover } from 'antd';
@@ -113,11 +113,10 @@ const TableComponent = () => {
 
   const handleSearch = () => {
     setSearchFilters(filterValues);
-    setFilteredOrders(orders); // Reset filtered orders to include all orders based on updated search filters
     setOpen(false); // Close the popover
   };
 
-  const [selectedRange, setSelectedRange] = useState([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
+  const [selectedRange, setSelectedRange] = useState([dayjs().subtract(30, 'd').startOf('day'), dayjs()]);
 
   const onOk = (value) => {
     console.log('onOk: ', value);
@@ -152,17 +151,18 @@ const TableComponent = () => {
     setSortConfig({ key: columnValue, direction });
   };
 
-  const sortedData = React.useMemo(() => {
-    if (!selectedRange) return filteredOrders;
+  const sortedData = useMemo(() => {
+    let dateFilteredOrders = filteredOrders;
 
-    const startDate = selectedRange[0];
-    const endDate = selectedRange[1];
+    if (selectedRange && selectedRange.length === 2) {
+      const [startDate, endDate] = selectedRange;
 
-    // Filter by date range
-    let dateFilteredOrders = filteredOrders.filter(order => {
-      const orderDate = dayjs(order.date); // Assuming 'order.date' contains the date you want to filter
-      return orderDate.isBetween(startDate, endDate, null, '[]'); // Inclusive filter
-    });
+      // Filter by date range
+      dateFilteredOrders = filteredOrders.filter(order => {
+        const orderDate = dayjs(order.date); // Assuming 'order.date' contains the date you want to filter
+        return orderDate.isBetween(startDate, endDate, null, '[]'); // Inclusive filter
+      });
+    }
 
     // Filter by search form values
     Object.keys(searchFilters).forEach(key => {
@@ -174,7 +174,7 @@ const TableComponent = () => {
 
     // Sort the filtered data
     if (sortConfig.key) {
-      return [...dateFilteredOrders].sort((a, b) => {
+      dateFilteredOrders = [...dateFilteredOrders].sort((a, b) => {
         if (a[sortConfig.key] < b[sortConfig.key]) {
           return sortConfig.direction === 'ascending' ? -1 : 1;
         }
@@ -209,8 +209,8 @@ const TableComponent = () => {
       'split': '',
     });
   
-    // Reset the date range to the default (today)
-    setSelectedRange([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
+    // Reset the date range to the default (last 30 days)
+    setSelectedRange([dayjs().subtract(30, 'd').startOf('day'), dayjs()]);
   
     // Reset filtered orders to include all orders
     setFilteredOrders(orders);
@@ -272,7 +272,7 @@ const TableComponent = () => {
                               }}
                             />
                           ))}
-                         <Button size="small" variant="contained" onClick={handleSearch}>
+                          <Button size="small" variant="contained" onClick={handleSearch}>
                             Search
                           </Button>
                         </div>
@@ -290,13 +290,7 @@ const TableComponent = () => {
                   <TableCell colSpan={10}>
                     <Space direction="vertical" size={12}>
                       <RangePicker
-                        presets={[
-                          {
-                            label: <span aria-label="End of Day to Current Time">Last day</span>,
-                            value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
-                          },
-                          ...rangePresets,
-                        ]}
+                        presets={rangePresets}
                         showTime={{
                           format: 'HH:mm',
                         }}
@@ -304,8 +298,6 @@ const TableComponent = () => {
                         value={selectedRange}
                         onChange={(value, dateString) => {
                           setSelectedRange(value); // Set the selected range to the state
-                          console.log('Selected Time: ', value);
-                          console.log('Formatted Selected Time: ', dateString);
                         }}
                         onOk={onOk}
                       />
