@@ -1,4 +1,4 @@
-import React, { useState , useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import clsx from "clsx";
 import PerfectScrollbar from "react-perfect-scrollbar";
 import { makeStyles } from "@material-ui/styles";
@@ -12,12 +12,13 @@ import {
   TableHead,
   TableRow,
   TablePagination
-} from "@material-ui/core";
+} from "@material-ui/core"; // Ensure consistency here if you are using @mui/material or @material-ui/core
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { DatePicker, Space, Popover } from 'antd';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
+import { orders } from './Const'; // Ensure this import is correct
 
 dayjs.extend(isBetween);
 const { RangePicker } = DatePicker;
@@ -35,53 +36,20 @@ const useStyles = makeStyles(theme => ({
   actions: {
     justifyContent: "flex-end"
   },
-}));  
+}));
 
 const TableComponent = () => {
   const classes = useStyles();
 
- // Static data array
- const orders = [
-  {
-    agentname: "Jane Smith",
-    agentid: "5678",
-    extension: "1002",
-    date: "2024-07-27 11:15",
-    dialednum: "0722334455",
-    duration: "00:03:45",
-    holdtime: "00:00:30",
-    ucid: "23456789012345678901",
-    callid: "5678",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "Yes"
-  },
-  {
-    agentname: "ALi",
-    agentid: "4444",
-    extension: "109",
-    date: "2024-08-28 11:15",
-    dialednum: "0788899",
-    duration: "00:03:45",
-    holdtime: "00:00:30",
-    ucid: "23456789012345678901",
-    callid: "5678",
-    trunkgroup: "Group2",
-    split: "2",
-    transferred: "Yes"
-  }
-  // Add more orders as needed
-];
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [page, setPage] = useState(0);
-  
   const [filteredOrders, setFilteredOrders] = useState(orders);
 
   const tableHeaders = [
     { text: "Agent Name", value: "agentname" },
     { text: "Agent ID", value: "agentid" },
     { text: "Extension", value: "extension" },
-    { text: "Date", value: "date"},
+    { text: "Date", value: "date" },
     { text: "Dialed Num", value: "dialednum" },
     { text: "UCID", value: "ucid" },
     { text: "Call ID", value: "callid" },
@@ -89,7 +57,7 @@ const TableComponent = () => {
     { text: "Split", value: "split" },
     { text: "Duration", value: "duration" },
     { text: "Hold Time", value: "holdtime" },
-    { text: "Transferred", value: "transferred"}
+    { text: "Transferred", value: "transferred" }
   ];
 
   const headerWidths = {
@@ -106,7 +74,6 @@ const TableComponent = () => {
     holdtime: '110px',
     transferred: '120px'
   };
-
 
   const handlePageChange = (event, page) => {
     setPage(page);
@@ -125,6 +92,24 @@ const TableComponent = () => {
     { id: "trunk", label: "Trunk" },
     { id: "split", label: "Split" },
   ];
+
+  const [filterValues, setFilterValues] = useState({
+    'agent-id': '',
+    'extension': '',
+    'dialed-num': '',
+    'ucid': '',
+    'trunk': '',
+    'split': '',
+  });
+
+  const [searchFilters, setSearchFilters] = useState({
+    'agent-id': '',
+    'extension': '',
+    'dialed-num': '',
+    'ucid': '',
+    'trunk': '',
+    'split': '',
+  });
 
   const [selectedRange, setSelectedRange] = useState([dayjs().subtract(0, 'd').startOf('day'), dayjs()]);
 
@@ -147,13 +132,11 @@ const TableComponent = () => {
     }
   ];
 
-  //open Fillter button
   const [open, setOpen] = useState(false);
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
 
-  //Fillter Data when click on cell 
   const [sortConfig, setSortConfig] = useState({ key: '', direction: 'ascending' });
   const handleSort = (columnValue) => {
     let direction = 'ascending';
@@ -163,19 +146,26 @@ const TableComponent = () => {
     setSortConfig({ key: columnValue, direction });
   };
 
-  //Data sorted
   const sortedData = React.useMemo(() => {
     if (!selectedRange) return filteredOrders;
-  
+
     const startDate = selectedRange[0];
     const endDate = selectedRange[1];
-  
+
     // Filter by date range
-    const dateFilteredOrders = filteredOrders.filter(order => {
+    let dateFilteredOrders = filteredOrders.filter(order => {
       const orderDate = dayjs(order.date); // Assuming 'order.date' contains the date you want to filter
       return orderDate.isBetween(startDate, endDate, null, '[]'); // Inclusive filter
     });
-  
+
+    // Filter by search form values
+    Object.keys(searchFilters).forEach(key => {
+      const value = searchFilters[key];
+      if (value) {
+        dateFilteredOrders = dateFilteredOrders.filter(order => order[key.replace('-', '')].includes(value));
+      }
+    });
+
     // Sort the filtered data
     if (sortConfig.key) {
       return [...dateFilteredOrders].sort((a, b) => {
@@ -188,30 +178,44 @@ const TableComponent = () => {
         return 0;
       });
     }
-  
+
     return dateFilteredOrders;
-  }, [filteredOrders, sortConfig, selectedRange]);
+  }, [filteredOrders, sortConfig, selectedRange, searchFilters]);
 
   const handleClear = () => {
-    setFilteredOrders(orders);      // Reset filtered orders to the default orders
+    setFilteredOrders(orders); // Reset filtered orders to the default orders
     setSelectedRange([dayjs().subtract(0, 'd').startOf('day'), dayjs()]); // Reset the date range to the default (today)
     setSortConfig({ key: '', direction: '' }); // Reset the sorting configuration
   };
 
   useEffect(() => {
-   
-  }, []);
+    const applyFilters = () => {
+      let filteredData = orders;
+
+      // Apply filters from the search fields
+      Object.keys(searchFilters).forEach(key => {
+        const value = searchFilters[key];
+        if (value) {
+          filteredData = filteredData.filter(order => order[key.replace('-', '')].includes(value));
+        }
+      });
+
+      setFilteredOrders(filteredData);
+    };
+
+    applyFilters();
+  }, [searchFilters]);
 
   return (
-    
-    <Card className={clsx(classes.root)} >  
-    <CardContent className={classes.content}>
+    <Card className={clsx(classes.root)}>
+      <CardContent className={classes.content}>
         <PerfectScrollbar>
           <div className={classes.inner}>
-          <Table>
+            <Table>
               {/* Filter */}
               <TableHead>
                 <TableRow>
+                  {/* Filter button */}
                   <TableCell colSpan={1}>
                     <Popover
                       content={
@@ -223,6 +227,8 @@ const TableComponent = () => {
                               label={field.label}
                               variant="outlined"
                               size="small"
+                              value={filterValues[field.id]} // Bind value to state
+                              onChange={(e) => setFilterValues({ ...filterValues, [field.id]: e.target.value })} // Update state on change
                               style={{ width: "200px", marginBottom: "10px", fontSize: "14px" }}
                               InputProps={{
                                 style: { fontSize: "14px" },
@@ -232,7 +238,7 @@ const TableComponent = () => {
                               }}
                             />
                           ))}
-                          <Button size="small" variant="contained">
+                          <Button size="small" variant="contained" onClick={() => setSearchFilters(filterValues)}>
                             Search
                           </Button>
                         </div>
@@ -249,26 +255,26 @@ const TableComponent = () => {
                   {/* TIME */}
                   <TableCell colSpan={10}>
                     <Space direction="vertical" size={12}>
-                    <RangePicker
-                      presets={[
-                        {
-                          label: <span aria-label="End of Day to Current Time">Last day</span>,
-                          value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
-                        },
-                        ...rangePresets,
-                      ]}
-                      showTime={{
-                        format: 'HH:mm',
-                      }}
-                      format="YYYY-MM-DD HH:mm"
-                      value={selectedRange}
-                      onChange={(value, dateString) => {
-                        setSelectedRange(value); // Set the selected range to the state
-                        console.log('Selected Time: ', value);
-                        console.log('Formatted Selected Time: ', dateString);
-                      }}
-                      onOk={onOk}
-                    />
+                      <RangePicker
+                        presets={[
+                          {
+                            label: <span aria-label="End of Day to Current Time">Last day</span>,
+                            value: () => [dayjs().subtract(1, 'd').startOf('day'), dayjs()],
+                          },
+                          ...rangePresets,
+                        ]}
+                        showTime={{
+                          format: 'HH:mm',
+                        }}
+                        format="YYYY-MM-DD HH:mm"
+                        value={selectedRange}
+                        onChange={(value, dateString) => {
+                          setSelectedRange(value); // Set the selected range to the state
+                          console.log('Selected Time: ', value);
+                          console.log('Formatted Selected Time: ', dateString);
+                        }}
+                        onOk={onOk}
+                      />
                     </Space>
                   </TableCell>
 
@@ -285,7 +291,7 @@ const TableComponent = () => {
                   {tableHeaders.map(item => (
                     <TableCell
                       key={item.value}
-                      style={{ padding: '14px 8px',fontWeight: "600" ,cursor: 'pointer', width: headerWidths[item.value],fontSize:'13px' }}
+                      style={{ padding: '14px 8px', fontWeight: "600", cursor: 'pointer', width: headerWidths[item.value], fontSize: '13px' }}
                       onClick={() => handleSort(item.value)}
                     >
                       <span>{item.text}</span>
@@ -312,11 +318,11 @@ const TableComponent = () => {
         </PerfectScrollbar>
       </CardContent>
 
-      <CardActions className={classes.actions} style={{ height:'55px' }}>
+      <CardActions className={classes.actions} style={{ height: '55px' }}>
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={filteredOrders.length}
+          count={sortedData.length}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handlePageChange}
