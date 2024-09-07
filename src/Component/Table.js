@@ -61,18 +61,18 @@ const TableComponent = () => {
   ];
 
   const headerWidths = {
-    agentname: '140px',
-    agentid: '120px',
-    extension: '100px',
-    date: '150px',
-    dialednum: '150px',
-    ucid: '120px',
-    callid: '120px',
-    trunkgroup: '140px',
-    split: '100px',
-    duration: '120px',
-    holdtime: '120px',
-    transferred: '120px'
+    agentname: '15%',
+    agentid: '10%',
+    extension: '10%',
+    date: '20%',
+    dialednum: '15%',
+    ucid: '10%',
+    callid: '10%',
+    trunkgroup: '15%',
+    split: '10%',
+    duration: '10%',
+    holdtime: '10%',
+    transferred: '10%'
   };
 
   const handlePageChange = (event, page) => {
